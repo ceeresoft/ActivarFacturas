@@ -75,7 +75,7 @@ function actualizarEstadoFactura(idFactura, nuevoEstado, callback) {
         }
     );
 
-    request.addParameter('Estado', TYPES.NVarChar, nuevoEstado);
+    request.addParameter('Estado', TYPES.Int, nuevoEstado);
     request.addParameter('IdFactura', TYPES.Int, idFactura);
 
     connection.execSql(request);
@@ -97,7 +97,7 @@ connection.on('connect', (err) => {
         if (factura) {
             console.log('Factura encontrada:', factura);
 
-            actualizarEstadoFactura(83361, 'Procesado', (err, rowsAffected) => {
+            actualizarEstadoFactura(83361, 1, (err, rowsAffected) => {
                 if (err) return;
                 console.log('Actualización finalizada.');
                 connection.close();
