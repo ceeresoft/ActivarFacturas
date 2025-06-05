@@ -27,85 +27,38 @@ const config = {
     }
 };
 
-const connection = new Connection(config);
+function ejecutarConsulta(query, parametros = [], onRow, onComplete, onError) {
+    const connection = new Connection(config);
 
-function consultarFactura(idFactura, callback) {
-    const request = new Request(
-        `SELECT * FROM [Factura] WHERE [id factura] = @IdFactura`,
-        (err, rowCount) => {
-            if (err) {
-                console.error('Error al ejecutar la consulta:', err.message);
-                callback(err);
-            } else if (rowCount === 0) {
-                console.log('No se encontró la factura con ID:', idFactura);
-                callback(null, null);
-            }
+    connection.on('connect', (err) => {
+        if (err) {
+            console.error('Error al conectar a la base de datos:', err.message);
+            if (onError) onError(err);
+            return;
         }
-    );
 
-    let facturaEncontrada = null;
-
-    request.addParameter('IdFactura', TYPES.Int, idFactura);
-
-    request.on('row', (columns) => {
-        facturaEncontrada = {};
-        columns.forEach(column => {
-            facturaEncontrada[column.metadata.colName] = column.value;
+        const request = new Request(query, (err, rowCount) => {
+            if (err) {
+                if (onError) onError(err);
+            } else {
+                if (onComplete) onComplete(rowCount);
+            }
+            connection.close();
         });
+
+        // Añadir parámetros
+        parametros.forEach(p => {
+            request.addParameter(p.nombre, p.tipo, p.valor);
+        });
+
+        request.on('row', onRow);
+        connection.execSql(request);
     });
 
-    request.on('requestCompleted', () => {
-        callback(null, facturaEncontrada);
-    });
-
-    connection.execSql(request);
+    connection.connect();
 }
 
-// function actualizarEstadoFactura(idFactura, nuevoEstado, callback) {
-//     const request = new Request(
-//         `UPDATE [Factura] SET [EstadoFacturaElectronica] = @Estado WHERE [id factura] = @IdFactura`,
-//         (err, rowCount) => {
-//             if (err) {
-//                 console.error('Error al actualizar la factura:', err.message);
-//                 callback(err);
-//             } else {
-//                 console.log(`Factura actualizada correctamente. Filas afectadas: ${rowCount}`);
-//                 callback(null, rowCount);
-//             }
-//         }
-//     );
-
-//     request.addParameter('Estado', TYPES.Int, nuevoEstado);
-//     request.addParameter('IdFactura', TYPES.Int, idFactura);
-
-//     connection.execSql(request);
-// }
-
-connection.connect();
-
-connection.on('connect', (err) => {
-    if (err) {
-        console.error('Error al conectarse a la base de datos:', err.message);
-        return;
-    }
-
-    console.log('Conectado a la base de datos');
-
-    // consultarFactura(83361, (err, factura) => {
-    //     if (err) return;
-
-    //     if (factura) {
-    //         console.log('Factura encontrada:', factura);
-
-    //         actualizarEstadoFactura(83361, 1, (err, rowsAffected) => {
-    //             if (err) return;
-    //             console.log('Actualización finalizada.');
-    //             connection.close();
-    //         });
-
-    //     } else {
-    //         console.log('No se pudo actualizar porque la factura no existe.');
-    //         connection.close();
-    //     }
-    // });
-});
+module.exports = {
+    ejecutarConsulta,
+    TYPES
+};
