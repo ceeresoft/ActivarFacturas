@@ -39,6 +39,37 @@ app.get('/BuscarFactura/:IdEmpresaV/:NumeroFactura', (req, res) => {
     );
 });
 
+
+app.get("/EmpresavConEstado7", (req, res) => {
+  const query = `
+        SELECT [Id EmpresaV] , [Resolución Facturación EmpresaV]
+        FROM Empresav
+        WHERE [Id Estado]= 7;
+    `;
+  const parametros = [];
+  ejecutarConsulta(
+    query,
+    parametros,
+    (columns) => {
+     
+        EmpresaV = columns[0].value + "|" + columns[1].value;
+     
+         
+    },
+    () => {
+      if (  EmpresaV !== null) {
+        res.json(EmpresaV);
+      } else {
+        res.status(404).send("No se encontraron registros de EmpresaV");
+      }
+    },
+    (err) => {
+      console.error("Error en la consulta:", err);
+      res.status(500).send(`Error interno en el programa: ${err.message}`);
+    }
+  );
+});
+
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
