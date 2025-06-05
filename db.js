@@ -61,25 +61,25 @@ function consultarFactura(idFactura, callback) {
     connection.execSql(request);
 }
 
-function actualizarEstadoFactura(idFactura, nuevoEstado, callback) {
-    const request = new Request(
-        `UPDATE [Factura] SET [EstadoFacturaElectronica] = @Estado WHERE [id factura] = @IdFactura`,
-        (err, rowCount) => {
-            if (err) {
-                console.error('Error al actualizar la factura:', err.message);
-                callback(err);
-            } else {
-                console.log(`Factura actualizada correctamente. Filas afectadas: ${rowCount}`);
-                callback(null, rowCount);
-            }
-        }
-    );
+// function actualizarEstadoFactura(idFactura, nuevoEstado, callback) {
+//     const request = new Request(
+//         `UPDATE [Factura] SET [EstadoFacturaElectronica] = @Estado WHERE [id factura] = @IdFactura`,
+//         (err, rowCount) => {
+//             if (err) {
+//                 console.error('Error al actualizar la factura:', err.message);
+//                 callback(err);
+//             } else {
+//                 console.log(`Factura actualizada correctamente. Filas afectadas: ${rowCount}`);
+//                 callback(null, rowCount);
+//             }
+//         }
+//     );
 
-    request.addParameter('Estado', TYPES.Int, nuevoEstado);
-    request.addParameter('IdFactura', TYPES.Int, idFactura);
+//     request.addParameter('Estado', TYPES.Int, nuevoEstado);
+//     request.addParameter('IdFactura', TYPES.Int, idFactura);
 
-    connection.execSql(request);
-}
+//     connection.execSql(request);
+// }
 
 connection.connect();
 
@@ -91,21 +91,21 @@ connection.on('connect', (err) => {
 
     console.log('Conectado a la base de datos');
 
-    consultarFactura(83361, (err, factura) => {
-        if (err) return;
+    // consultarFactura(83361, (err, factura) => {
+    //     if (err) return;
 
-        if (factura) {
-            console.log('Factura encontrada:', factura);
+    //     if (factura) {
+    //         console.log('Factura encontrada:', factura);
 
-            actualizarEstadoFactura(83361, 1, (err, rowsAffected) => {
-                if (err) return;
-                console.log('Actualización finalizada.');
-                connection.close();
-            });
+    //         actualizarEstadoFactura(83361, 1, (err, rowsAffected) => {
+    //             if (err) return;
+    //             console.log('Actualización finalizada.');
+    //             connection.close();
+    //         });
 
-        } else {
-            console.log('No se pudo actualizar porque la factura no existe.');
-            connection.close();
-        }
-    });
+    //     } else {
+    //         console.log('No se pudo actualizar porque la factura no existe.');
+    //         connection.close();
+    //     }
+    // });
 });

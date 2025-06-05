@@ -1,6 +1,6 @@
 const { Request, TYPES } = require('tedious');
 const Router = require('express').Router;
-const connection = require('db');
+const connection = require('./db');
 
 const router = Router();
 
