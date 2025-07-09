@@ -12,7 +12,7 @@ app.use(compression());
 
 app.use(cors());
 
-app.use(express-json({limit: '1000mb'}));
+app.use(express.json({limit: '1000mb'}));
 
 app.use(express.urlencoded({ limit: '1000mb', extended: true}));
 
