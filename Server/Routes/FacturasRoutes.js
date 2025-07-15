@@ -1,4 +1,4 @@
-const { Request, TYPES} = require('tedious');  //permite conectarse a sql desde js
+const { Request, TYPES, Connection} = require('tedious');  //permite conectarse a sql desde js
 const Router = require('express').Router;      //servicio web
 const connection = require('../bd/bd');        //conexion con la base de datos
 const { request } = require('express');
@@ -253,13 +253,18 @@ router.post('/Actualizar', async (req, res) =>{
             if (!res.headersSent) {
                 res.status(500).json({eror: `Error al ejecutar la consulta: ${err.message || err}`})
             }
-        })
+        });
 
+        Connection,execSql(request);
 
     } catch (error) {
+        console.error(`Error en la conexion o ejecucion: ${error}`);
+        if (!res.headersSent) {
+            res.status(500).json({error:`Error interno del servidor: ${error.message || error}`});
+        }
         
     }
-})
-//prueb
+});
+
 
 
