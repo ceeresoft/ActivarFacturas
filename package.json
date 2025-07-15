@@ -1,0 +1,26 @@
+{
+  "name": "activarfacturas",
+  "version": "1.0.0",
+  "description": "Activar facturas de ana catalina",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ceeresoft/ActivarFacturas.git"
+  },
+  "author": "Fernando",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ceeresoft/ActivarFacturas/issues"
+  },
+  "homepage": "https://github.com/ceeresoft/ActivarFacturas#readme",
+  "dependencies": {
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "fs": "0.0.1-security",
+    "tedious": "^18.6.1"
+  }
+}

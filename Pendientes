@@ -1,0 +1,20 @@
+En este proyecto encontraras una estructura lista con conexion a base de datos
+
+Tareas
+
+1. Debes crear un endpoint TIPO GET que me retorne en formato  json los prefijos y id empresaV que esten activos en ese momento
+
+Select [Id EmpresaV],  Prefijo Resolución Facturación EmpresaV From EmpresaV WHERE [Id Estado] = 7
+
+2. Debes crear un endpoint TIPO GET que me retorne en formato  json un id factura segun un numero de factura escrito por el cliente y el id empresaV seleccionado previamente
+(Ten encuenta que estos dos deben enviarse como parametros en el endpoint)
+
+Select [Id Factura] From Factura WHERE [Id EmpresaV] = @idempresaV and  [No Factura] = @NumeroFactura
+
+crear un endpoint de tipo POST que reciba como parametro el id factura y actualice en la tabla factura donde el id sea igual al parametro EstadoFacturaElectronica = null
+
+UPDATE Factura Set EstadoFacturaElectronica = null
+WHERE [Id Factura] = @idfactura
+
+
+
