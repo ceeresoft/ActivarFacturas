@@ -199,18 +199,19 @@ router.get('/buscarFactura/:NroFactura/:idempresaV', async (req, res) => {
 //crear un endpoint de tipo POST que reciba como parametro el id factura y actualice en la tabla factura donde el id sea igual al parametro EstadoFacturaElectronica = null
 
 router.post('/Actualizar', async (req, res) =>{
-    const idFactura = Number(req.params.idFactura);
-    const EstadoFacturaElectronica = Number(req.params.EstadoFacturaElectronica);
+    console.log('Entro al endpoint post')
+    const idFactura = Number(req.body.idFactura);
+    // const EstadoFacturaElectronica = Number(req.body.EstadoFacturaElectronica);
 
     //Validacion de existencia 
-    if (!idFactura || !EstadoFacturaElectronica) {
-        return res.status(400).json({error: 'faltan parametros en la URL'});
+    if (!idFactura) {
+        return res.status(400).json({error: 'falta el parametro idFactura en el cuerpo (body)'});
         
     }
 
     //Validacion de tipo
-    if (isNaN(idFactura) || isNaN(EstadoFacturaElectronica)) {
-        return res.status(400).json({error: 'Los parametros deben de ser numericos'})   
+    if (isNaN(idFactura)) {
+        return res.status(400).json({error: 'El parametro idFactura debe ser numerico'});   
     }
 
     try {
@@ -219,7 +220,7 @@ router.post('/Actualizar', async (req, res) =>{
             WHERE [Id Factura] = @IdFactura`,
             (err) => {
                 if (err) {
-                    console.error(`Error de consulta ${err}`);
+                    console.error(`Error de consulta: ${ err?.errors?.[0]?.message || err.message || err}`);
                     if (!res.headersSent) {
                         res.status(500).json({ error: `Error interno del servidor: ${err.message || err}`});
                     }
@@ -227,24 +228,25 @@ router.post('/Actualizar', async (req, res) =>{
             }
         );
 
-        request.addParameter('Id Factura', TYPES.Int, idFactura);
-        request.addParameter('EstadoFacturaElectronica', TYPES.Int, EstadoFacturaElectronica);
+        request.addParameter('IdFactura', TYPES.Int, idFactura);
+        // request.addParameter('EstadoFacturaElectronica', TYPES.Int, EstadoFacturaElectronica);
 
         let resultados = [];
 
-        request.on('row', (Columns) => {
-            let factura = {
-                idFactura: Columns[0].value,
-                EstadoFacturaElectronica: Columns[1].value,
-            };
-            resultados.push(factura);
-        });
+        // request.on('row', (Columns) => {
+        //     let factura = {
+        //         idFactura: Columns[0].value,
+        //         // EstadoFacturaElectronica: Columns[1].value,
+        //     };
+        //     resultados.push(factura);
+        // });
 
         request.on('requestCompleted',()=> {
-            console.log('Resultados de la consulta:');
-            console.log(resultados);
+            // console.log('Resultados de la consulta:');
+            // console.log(resultados);
             if (!res.headersSent) {
-                res.json(resultados);
+            //     res.json(resultados);
+                res.status(200).json({mensaje: `Factura actualizada correctamente`})
             }
         });
 
@@ -255,7 +257,7 @@ router.post('/Actualizar', async (req, res) =>{
             }
         });
 
-        Connection,execSql(request);
+        connection.execSql(request);
 
     } catch (error) {
         console.error(`Error en la conexion o ejecucion: ${error}`);
