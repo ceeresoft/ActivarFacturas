@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body {
+        margin: 0;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        /* Centra horizontalmente */
+        display: flex;
+        align-items: center;
+        /* Centra verticalmente */
+    }
+
+    .contenedor-base {
+        border: solid 1px blue;
+        width: 1000px;
+        height: 150px;
+        display: flex;
+    }
+
+    .Seccion {
+        flex: 1;
+        border: solid 1px black;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .contenedor-body {
+
+        border: solid 1px red;
+        height: 1000px;
+        width: 1000px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        display: block;
+    }
+
+    .contenedor-base2 {
+        border: solid 1px green;
+        width: auto;
+        height: 300px;
+        display: flex;
+    }
+
+    .Seccion-Facturas {
+        flex: 1;
+        border: solid 1px chocolate;
+        padding: 10px;
+        text-align: center;
+        position: relative;
+    }
+
+    .SelectResoluciones {
+        width: 300px;
+        height: 20px;
+    }
+
+    .factura {
+        display: flex;
+        width: 200px;
+
+    }
+
+    .nombre{
+        display: flex;
+        width: 350px;
+    }
+
+    .valor{
+        display: flex;
+        width: 150px;
+    }
+
+    .fecha{
+        display: flex;
+        width: 200px;
+    }
+
+    .botonActivar {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      padding: 16px 30px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .botonActivar:hover {
+      background-color: #0056b3;
+    }
+
+</style>
+
+<body>
+
+
+    <div class="contenedor-body">
+        <div class="contenedor-base">
+            <div class="Seccion">
+                <img src="./Img/Logo.jpg" alt="" style="height: 125px; width: 180px;">
+            </div>
+            <div class="Seccion">
+                <h1>Modulo De Activacion de Facturas</h1>
+            </div>
+
+        </div>
+        <div class="contenedor-base2">
+            <div class="Seccion-Facturas">
+                <select name="Resoluciones" id="Resoluciones" class="SelectResoluciones">
+                    <option value=""></option>
+                </select>
+                 <button class="botonActivar">Activar</button>
+            </div>
+            <div class="Seccion-Facturas">
+                <input type="text" class="factura" id="factura" placeholder="Numero de factura">
+                <br>
+                <b class="nombre">Resposable</b>
+                <input type="text" class="nombre" id="nombrepaciente">
+                <br>
+                <b class="fecha">Fecha Factura</b>
+                <input type="text" class="fecha" id="Fecha">
+                <br>
+                <b class="valor">Valor Factura</b>
+                <input type="text" class="valor" id="valorfactura">
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
