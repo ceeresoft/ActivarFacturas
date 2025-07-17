@@ -51,7 +51,13 @@ app.get('/api/sse', (req, res) => {
     });
 });
 
-app.use('/Facturas', Facturas);
+// Usamos el prefijo '/api' para separar claramente las rutas del backend (API REST) 
+// de posibles rutas de frontend (páginas web, vistas, etc.). 
+// Esto mejora la organización, facilita el mantenimiento y sigue buenas prácticas 
+// comunes en aplicaciones profesionales y escalables.
+app.use('/api/facturas', Facturas);
+
+
 
 const port = 3500;
 
