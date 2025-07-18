@@ -1,13 +1,6 @@
 const {Connection, Request, TYPES} = require('tedious');
 const fs = require('fs');
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 const { ErrorMessageToken } = require('tedious/lib/token/token');
->>>>>>> 0951d59df343f20130e5514d881fedaa00ee7f3a
-=======
-const { ErrorMessageToken } = require('tedious/lib/token/token');
->>>>>>> 0951d59df343f20130e5514d881fedaa00ee7f3a
 // const { Server } = require('http');
 // const { type } = require('os');
 // const { error } = require('console');
@@ -75,11 +68,4 @@ module.exports = connection;
 
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
->>>>>>> 0951d59df343f20130e5514d881fedaa00ee7f3a
-=======
-
->>>>>>> 0951d59df343f20130e5514d881fedaa00ee7f3a

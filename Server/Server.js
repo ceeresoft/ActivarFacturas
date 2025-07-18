@@ -55,11 +55,11 @@ app.get('/api/sse', (req, res) => {
 // de posibles rutas de frontend (páginas web, vistas, etc.). 
 // Esto mejora la organización, facilita el mantenimiento y sigue buenas prácticas 
 // comunes en aplicaciones profesionales y escalables.
+
 app.use('/api/facturas', Facturas);
 
 
-
-const port = 3500;
+const port = process.env.PORT || 3500;
 
 app.listen(port, () => {
     console.log(`Servidor Corriendo por http://localhost:${port}`);

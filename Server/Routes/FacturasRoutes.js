@@ -5,6 +5,7 @@ const { request } = require('express');
 const { lchmod } = require('fs/promises');
 const { error } = require('console');
 const { types } = require('util');
+const { enableCompileCache } = require('module');
 
 const router = Router();                       //agrupacion de las rutas
 
@@ -32,7 +33,7 @@ router.get('/PruebaFactura', async (req, res) => {
 
         request.on('row', (Columns) => {
             let factura = {
-                idfactura: Columns[0].value
+                IdFactura: Columns[0].value
             };
             resultados.push(factura);
         });
@@ -132,7 +133,7 @@ router.get('/buscarFactura/:NroFactura/:idempresaV', async (req, res) => {
     const idempresaV = Number(req.params.idempresaV);
 
         // ✅ Validación de existencia
-    if (!NroFactura || !idempresaV) {
+    if (req.params.NroFactura === undefined || req.params.idempresaV === undefined) {
         return res.status(400).json({ error: 'Faltan parámetros en la URL' });
     }
 
@@ -164,7 +165,7 @@ router.get('/buscarFactura/:NroFactura/:idempresaV', async (req, res) => {
 
         request.on('row', (Columns) => {
             let factura = {
-                idFactura: Columns[0].value
+                IdFactura: Columns[0].value
             };
             resultados.push(factura);
         });
@@ -198,75 +199,126 @@ router.get('/buscarFactura/:NroFactura/:idempresaV', async (req, res) => {
 
 //crear un endpoint de tipo POST que reciba como parametro el id factura y actualice en la tabla factura donde el id sea igual al parametro EstadoFacturaElectronica = null
 
-router.post('/Actualizar', async (req, res) =>{
-    console.log('Entro al endpoint post')
-    const idFactura = Number(req.body.idFactura);
-    // const EstadoFacturaElectronica = Number(req.body.EstadoFacturaElectronica);
+// router.post('/Actualizar', async (req, res) =>{
+//     console.log('Entro al endpoint post')
+//     const IdFactura = Number(req.body.IdFactura);
+//     // const EstadoFacturaElectronica = Number(req.body.EstadoFacturaElectronica);
 
-    //Validacion de existencia 
-    if (!idFactura) {
-        return res.status(400).json({error: 'falta el parametro idFactura en el cuerpo (body)'});
+//     //Validacion de existencia 
+//     if (!IdFactura) {
+//         return res.status(400).json({error: 'falta el parametro IdFactura en el cuerpo (body)'});
         
+//     }
+
+//     //Validacion de tipo
+//     if (isNaN(IdFactura)) {
+//         return res.status(400).json({error: 'El parametro IdFactura debe ser numerico'});   
+//     }
+
+//     try {
+//         const request = new Request(
+//             `UPDATE Factura SET EstadoFacturaElectronica = NULL 
+//             WHERE [Id Factura] = @IdFactura`,
+//             (err) => {
+//                 if (err) {
+//                     console.error(`Error de consulta: ${ err?.errors?.[0]?.message || err.message || err}`);
+//                     if (!res.headersSent) {
+//                         res.status(500).json({ error: `Error interno del servidor: ${err.message || err}`});
+//                     }
+//                 }
+//             }
+//         );
+//         console.log('saliendo del try')
+
+//         request.addParameter('IdFactura', TYPES.Int, IdFactura);
+//         // request.addParameter('EstadoFacturaElectronica', TYPES.Int, EstadoFacturaElectronica);
+
+//         let resultados = [];
+
+//         // request.on('row', (Columns) => {
+//         //     let factura = {
+//         //         IdFactura: Columns[0].value,
+//         //         // EstadoFacturaElectronica: Columns[1].value,
+//         //     };
+//         //     resultados.push(factura);
+//         // });
+
+//         request.on('requestCompleted',()=> {
+//             // console.log('Resultados de la consulta:');
+//             // console.log(resultados);
+//             if (!res.headersSent) {
+//             //     res.json(resultados);
+//                 if (resultados.length === 0) {
+//                     res.status(400).json({mensaje: `no se encontro la factura con el id ${IdFactura}`});
+//                     }else{
+//                         res.status(200).json({mensaje: `Factura actualizada correctamente`})
+//                 }
+//             }
+//         });
+//         console.log('saliendo del completed')
+
+//         request.on('error', (err) => {
+//             console.error(`Error en la consulta: ${err}`);
+//             if (!res.headersSent) {
+//                 res.status(500).json({eror: `Error al ejecutar la consulta: ${err.message || err}`})
+//             }
+//             console.log('entramos en error')
+//         });
+
+//         connection.execSql(request);
+
+//     } catch (error) {
+//         console.error(`Error en la conexion o ejecucion: ${error}`);
+//         if (!res.headersSent) {
+//             res.status(500).json({error:`Error interno del servidor: ${error.message || error}`});
+//         }
+//         console.log('entramos al catch')
+//     }
+//     console.log('llegamos al final')
+// });
+
+
+
+
+
+router.post('/Actualizar', (req, res) => {
+  const { IdFactura } = req.body;
+
+  if (!IdFactura) {
+    return res.status(400).json({ error: 'Debe enviar el parámetro IdFactura' });
+  }
+
+  const connection = new Connection;
+
+  connection.on('connect', (err) => {
+    if (err) {
+      console.error('Error de conexión:', err);
+      return res.status(500).json({ error: 'Error al conectar con la base de datos' });
     }
 
-    //Validacion de tipo
-    if (isNaN(idFactura)) {
-        return res.status(400).json({error: 'El parametro idFactura debe ser numerico'});   
-    }
+    const sql = `
+      UPDATE Factura 
+      SET EstadoFacturaElectronica = NULL 
+      WHERE IdFactura = @IdFactura
+    `;
 
-    try {
-        const request = new Request(
-            `UPDATE Factura SET EstadoFacturaElectronica = NULL 
-            WHERE [Id Factura] = @IdFactura`,
-            (err) => {
-                if (err) {
-                    console.error(`Error de consulta: ${ err?.errors?.[0]?.message || err.message || err}`);
-                    if (!res.headersSent) {
-                        res.status(500).json({ error: `Error interno del servidor: ${err.message || err}`});
-                    }
-                }
-            }
-        );
+    const request = new Request(sql, (err) => {
+      if (err) {
+        console.error('Error en la consulta:', err);
+        res.status(500).json({ error: 'Error al ejecutar la consulta' });
+      } else {
+        res.status(200).json({ mensaje: 'Factura actualizada correctamente' });
+      }
 
-        request.addParameter('IdFactura', TYPES.Int, idFactura);
-        // request.addParameter('EstadoFacturaElectronica', TYPES.Int, EstadoFacturaElectronica);
+      connection.close();
+    });
 
-        let resultados = [];
+    request.addParameter('IdFactura', TYPES.Int, IdFactura);
 
-        // request.on('row', (Columns) => {
-        //     let factura = {
-        //         idFactura: Columns[0].value,
-        //         // EstadoFacturaElectronica: Columns[1].value,
-        //     };
-        //     resultados.push(factura);
-        // });
+    connection.execSql(request);
+  });
 
-        request.on('requestCompleted',()=> {
-            // console.log('Resultados de la consulta:');
-            // console.log(resultados);
-            if (!res.headersSent) {
-            //     res.json(resultados);
-                res.status(200).json({mensaje: `Factura actualizada correctamente`})
-            }
-        });
-
-        request.on('error', (err) => {
-            console.error(`Error en la consulta: ${err}`);
-            if (!res.headersSent) {
-                res.status(500).json({eror: `Error al ejecutar la consulta: ${err.message || err}`})
-            }
-        });
-
-        connection.execSql(request);
-
-    } catch (error) {
-        console.error(`Error en la conexion o ejecucion: ${error}`);
-        if (!res.headersSent) {
-            res.status(500).json({error:`Error interno del servidor: ${error.message || error}`});
-        }
-        
-    }
+  connection.connect();
 });
 
-
-
+module.exports = router;
