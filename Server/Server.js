@@ -14,6 +14,15 @@ app.use(cors());
 
 app.use(express.json({limit: '1000mb'}));
 
+//Evita que Express crashee si no puede parsear JSON
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        console.error(`Error de JSON mal formado:${err.message}`);
+        return res.status(400).json({error:'El cuerpo de la solicitud no es un JSON valido'});
+    }
+    next();
+});
+
 app.use(express.urlencoded({ limit: '1000mb', extended: true}));
 
 app.set('view engine', 'ejs');
@@ -50,6 +59,7 @@ app.get('/api/sse', (req, res) => {
         }
     });
 });
+
 
 // Usamos el prefijo '/api' para separar claramente las rutas del backend (API REST) 
 // de posibles rutas de frontend (páginas web, vistas, etc.). 
